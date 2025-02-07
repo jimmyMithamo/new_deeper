@@ -29,7 +29,6 @@ def supervisor_login(request):
 def supervisor_logout(request):
     return redirect('supervisor_login')
 
-@login_required
 def admin_page(request):
     context = {
         'groups': Group.objects.all(),
