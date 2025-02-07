@@ -20,5 +20,7 @@ urlpatterns = [
     path('supervisor/view_attendance/', views.view_attendance, name='view_attendance'),
     path('supervisor/all_attendance/', views.all_attendance, name='all_attendance'),
     path('supervisor/logout/', views.supervisor_logout, name='supervisor_logout'),
+    path('generate-report/', views.generate_attendance_report, name='generate_attendance_report'),
+
 ]
 

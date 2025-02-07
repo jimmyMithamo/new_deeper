@@ -5,6 +5,11 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
 from .models import Attendance, leaders, Group, Member, Session
+import io
+import base64
+import matplotlib.pyplot as plt
+from django.db.models import Count, Q
+
 
 
 def homepage(request):
@@ -179,3 +184,57 @@ def all_attendance(request):
         "attendance_data": attendance_data,
     }
     return render(request, "attendance/all_attendance.html", context)
+
+def generate_attendance_report(request):
+    sessions = Session.objects.all().order_by("date")
+    groups = Group.objects.all()
+    session_reports = []  # This will hold data per session
+    members_missed_all = []
+
+    # Calculate members who missed all sessions
+    for member in Member.objects.all():
+        if not Attendance.objects.filter(member=member, status=True).exists():
+            members_missed_all.append(member)
+
+    # For each session, compute the attendance data
+    for session in sessions:
+        # Get all attendance records for this session
+        session_attendance_qs = Attendance.objects.filter(session=session)
+        session_total_present = session_attendance_qs.filter(status=True).count()
+        session_total_absent = session_attendance_qs.filter(status=False).count()
+
+        # Compute group-specific attendance for this session
+        group_data = []
+        for group in groups:
+            present = session_attendance_qs.filter(member__group=group, status=True).count()
+            absent = session_attendance_qs.filter(member__group=group, status=False).count()
+            group_data.append({
+                'group': group.name,  # use group name
+                'total_present': present,
+                'total_absent': absent,
+            })
+
+        # Determine which group had the highest and lowest present counts in this session
+        if group_data:
+            highest = max(group_data, key=lambda x: x['total_present'])
+            lowest = min(group_data, key=lambda x: x['total_present'])
+        else:
+            highest = {'group': 'N/A', 'total_present': 0}
+            lowest = {'group': 'N/A', 'total_present': 0}
+
+        # Build a session-specific report dictionary
+        session_reports.append({
+            'session': session,
+            'total_present': session_total_present,
+            'total_absent': session_total_absent,
+            'group_attendance': group_data,
+            'highest_attendance': highest,
+            'lowest_attendance': lowest,
+        })
+
+    context = {
+        'session_attendance': session_reports,  # Each item is a report for one session
+        'members_missed_all': members_missed_all,
+    }
+    return render(request, 'attendance/attendance_report.html', context)
+
