@@ -39,9 +39,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="{% url 'logout' %}">Logout</a>
-                    </li>
+                    <form method="POST" action="{% url 'supervisor_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
                 </ul>
             </div>
         </div>
@@ -88,6 +89,15 @@
                     <div class="card-body">
                         <h5 class="card-title text-success fw-bold">View Attendance</h5>
                         <a href="{% url 'view_attendance' %}" class="btn btn-custom w-100 rounded-pill">Go to View Attendance</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-lg text-center card-custom">
+                    <div class="card-body">
+                        <h5 class="card-title text-success fw-bold">View all Attendance</h5>
+                        <a href="{% url 'all_attendance' %}" class="btn btn-custom w-100 rounded-pill">Go to View all Attendance</a>
                     </div>
                 </div>
             </div>
