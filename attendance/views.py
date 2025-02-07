@@ -10,11 +10,9 @@ from .models import Attendance, leaders, Group, Member, Session
 def homepage(request):
     return render(request, "attendance/homepage.html")
 
-@csrf_protect
 def login_view(request):
     return render(request, "attendance/login.html")
 
-@csrf_protect
 def supervisor_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -37,7 +35,6 @@ def admin_page(request):
     }
     return render(request, 'attendance/admin_homepage.html', context)
 
-@csrf_protect
 def view_attendance(request):
     sessions = Session.objects.all()
     if request.method == 'POST':
@@ -61,7 +58,6 @@ def view_attendance(request):
         })
     return render(request, 'attendance/view_attendance.html', {'sessions': sessions})
 
-@csrf_protect
 def manage_group(request):
     group_id = request.GET.get("group_id")
     selected_group = get_object_or_404(Group, id=group_id) if group_id else None
@@ -72,7 +68,6 @@ def manage_group(request):
         "all_members": Member.objects.all(),
     })
 
-@csrf_protect
 def add_member(request):
     if request.method == "POST":
         member = get_object_or_404(Member, id=request.POST.get("member_id"))
@@ -81,7 +76,6 @@ def add_member(request):
         member.save()
     return redirect(f"/supervisor/manage-group/?group_id={group.id}")
 
-@csrf_protect
 def remove_member(request):
     if request.method == "POST":
         member = get_object_or_404(Member, id=request.POST.get("member_id"))
@@ -90,7 +84,6 @@ def remove_member(request):
         member.save()
     return redirect(f"/supervisor/manage-group/?group_id={group_id}" if group_id else "/supervisor/manage-group/")
 
-@csrf_protect
 def assign_leader(request):
     groups = Group.objects.all()
     members = Member.objects.all()
@@ -117,7 +110,6 @@ def assign_leader(request):
             messages.error(request, f"Error: {e}")
     return render(request, 'attendance/assign_leader.html', context)
 
-@csrf_protect
 def check_login(request):
     if request.method == "POST":  
         try:
@@ -129,7 +121,6 @@ def check_login(request):
             messages.error(request, "Invalid username")
     return redirect("login")
 
-@csrf_protect
 def home(request):
     leader = leaders.objects.filter(username=request.session.get('leader')).first()
     if not leader:
@@ -144,7 +135,6 @@ def home(request):
     }
     return render(request, "attendance/home.html", context)
 
-@csrf_protect
 def attendance(request, session_id):
     leader = leaders.objects.get(username=request.session.get('leader'))
     group = leader.group
@@ -155,7 +145,6 @@ def attendance(request, session_id):
         member.attendance_status = attendance_records.get(member.id, "Not Marked")
     return render(request, 'attendance/mark_attendance.html', {"members": members, "session": session})
 
-@csrf_protect
 def submit_attendance(request, session_id):
     leader = leaders.objects.get(username=request.session.get('leader'))
     group = leader.group
