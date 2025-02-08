@@ -33,10 +33,14 @@ def supervisor_logout(request):
     return redirect('supervisor_login')
 
 def admin_page(request):
+    if not request.user.is_staff:
+        return redirect('supervisor_login')
+    user_name = request.user.username
     context = {
         'groups': Group.objects.all(),
         'members': Member.objects.all(),
-        'leaders': leaders.objects.all()
+        'leaders': leaders.objects.all(),
+        'user_name': user_name
     }
     return render(request, 'attendance/admin_homepage.html', context)
 

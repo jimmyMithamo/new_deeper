@@ -1,206 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assign Leader to Group</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f4f6f9;
-        }
-        .custom-navbar {
-            background: linear-gradient(90deg, #ff6b6b, #f06595, #845ef7, #5c7cfa, #339af0);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-    
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    
-        .custom-navbar .nav-link {
-            color: #fff;
-            transition: color 0.3s, background-color 0.3s;
-            font-weight: bold;
-            padding: 10px 15px;
-            border-radius: 5px;
-        }
-    
-        .custom-navbar .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffeb3b;
-        }
-    
-        .custom-navbar .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-    
-        .btn-outline-light {
-            border-color: #ffeb3b;
-            color: #ffeb3b;
-        }
-    
-        .btn-outline-light:hover {
-            background-color: #ffeb3b;
-            color: #000;
-        }
-        .sidebar {
-            background: linear-gradient(135deg, #000000, #000000);
-            color: white;
-            border-radius: 10px;
-            padding: 20px;
-            height: 50vh;
-            overflow-y: auto;
-        }
-        .sidebar h4 {
-            font-weight: bold;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar li {
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .sidebar li:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .content {
-            min-height: 50vh;
-        }
-        /* Navbar Styling */
-        .navbar {
-            background: linear-gradient(90deg, #00bcd4, #2196f3, #3f51b5, #00bcd4);
-            background-size: 300% 300%;
-            animation: gradientShift 8s ease infinite;
-            padding: 10px 0;
-            display: flex;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
+{% extends 'attendance/base.html' %}
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-4 col-lg-5 d-md-block bg-light sidebar collapse" id="sidebarMenu">
+            <div class="sidebar">
+                <h4>Groups & Leaders</h4>
+                <ul>
+                    {% for group in groups %}
+                        <li>
+                            <strong>{{ group.name }}</strong><br>
+                            <p class='text-info fw-bolder'>{{ group.leader.name }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
 
-        .navbar a {
-            color: #fff;
-            padding: 14px 25px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s, color 0.3s;
-            border-radius: 5px;
-            margin: 0 10px;
-        }
+        <!-- Main Content -->
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-7 px-md-4 content">
+            <div class="card shadow-lg p-4 mt-3">
+                <h1 class="text-center mb-4">Assign Leader to Group</h1>
 
-        .navbar a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffeb3b;
-        }
+                {% if message %}
+                    <div class="alert alert-info text-center" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
 
-        .navbar a:active {
-            background-color: rgba(0, 0, 0, 0.3);
-        }
-    </style>
-    <script>
-        function fetchMembers() {
-            let groupId = document.getElementById("groupSelect").value;
-            window.location.href = `/supervisor/manage-group/?group_id=${groupId}`;
-        }
-    </script>
-</head>
-<body>
-    <div class="navbar">
-        <a href="{% url 'admin_home' %}">Admin Dashboard</a>
-        <a href="{% url 'manage_group' %}">Manage Groups</a>
-        <a href="{% url 'view_attendance' %}">View Attendance</a>
-        <a href="{% url 'all_attendance' %}">View all attendance</a>
-        <a href="{% url 'logout' %}">Logout</a>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name">Leader Name:</label>
+                        <select class="form-control" name="name" required>
+                            {% for member in members %}
+                                <option value="{{ member.name }}">{{ member.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Leader Username:</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="group">Group:</label>
+                        <select class="form-control" name="group" required>
+                            {% for group in groups %}
+                                <option value="{{ group.name }}">{{ group.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block">Assign Leader</button>
+                </form>
+
+                <button class="btn btn-primary btn-block mt-3" onclick="window.location.href='{% url 'admin_home' %}'">Go Back Home</button>
+            </div>
+        </main>
     </div>
-    
-    
-   
-
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-4 col-lg-5 d-md-block bg-light sidebar collapse" id="sidebarMenu">
-                <div class="sidebar">
-                    <h4>Groups & Leaders</h4>
-                    <ul>
-                        {% for group in groups %}
-                            <li>
-                                <strong>{{ group.name }}</strong><br>
-                                <p class = 'text-info fw-bolder'>{{ group.leader.name }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </nav>
-
-            <!-- Main Content -->
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-7 px-md-4 content">
-                <div class="card shadow-lg p-4 mt-3">
-                    <h1 class="text-center mb-4">Assign Leader to Group</h1>
-
-                    {% if message %}
-                        <div class="alert alert-info text-center" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endif %}
-
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="name">Leader Name:</label>
-                            <select class="form-control" name="name" required>
-                                {% for member in members %}
-                                    <option value="{{ member.name }}">{{ member.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="username">Leader Username:</label>
-                            <input type="text" class="form-control" name="username" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="group">Group:</label>
-                            <select class="form-control" name="group" required>
-                                {% for group in groups %}
-                                    <option value="{{ group.name }}">{{ group.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-success btn-block">Assign Leader</button>
-                    </form>
-
-                    <button class="btn btn-primary btn-block mt-3" onclick="window.location.href='{% url 'admin_home' %}'">Go Back Home</button>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+</div>
+{% endblock %}
