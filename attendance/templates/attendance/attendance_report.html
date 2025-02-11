@@ -1,31 +1,31 @@
 {% extends 'attendance/base.html' %}
 
-{% block title %}Attendance Report{% endblock %}
+{% block title %}Attendance Report{% endblock title %}
 
 {% block content %}
-  <div class="container">
+  <div class="container-fluid">
     <h1 class="text-center mb-4">Attendance Report</h1>
     <div class="row">
       {% for session_info in session_attendance %}
-        <div class="col-md-4">
-          <div class="card h-100 border-2" style="border-color: #FF9D23;">
-            <div class="card-header" style="background-color: #FFD65A; color: #2c3e50; font-weight: bold;">
+        <div class="col-12 col-md-4 col-lg-3">
+          <div class="card border-2 m-2 shadow-sm" style="border-color: #FF9D23;">
+            <div class="card-header text-center fw-bold" style="background-color: #FFD65A; color: #2c3e50;">
               Session {{ forloop.counter }} - {{ session_info.session.date }}
             </div>
             <div class="card-body">
               <p>
                 <strong>Total Present:</strong>
-                <span class="text-success" style="color: #16C47F;">{{ session_info.total_present }}</span>
+                <span class="text-success fw-bold">{{ session_info.total_present }}</span>
               </p>
               <p>
                 <strong>Total Absent:</strong>
-                <span class="text-danger" style="color: #F93827;">{{ session_info.total_absent }}</span>
+                <span class="text-danger">{{ session_info.total_absent }}</span>
               </p>
               <hr>
               <p>
                 <strong>Group with Highest Attendance:</strong>
                 {% if session_info.highest_attendance.group != 'N/A' %}
-                  <span class="text-primary" style="color: #FF9D23;">{{ session_info.highest_attendance.group }}</span>
+                  <span style="color: #FF9D23;">{{ session_info.highest_attendance.group }}</span>
                 {% else %}
                   <span class="text-muted">N/A</span>
                 {% endif %}
@@ -34,7 +34,7 @@
               <p>
                 <strong>Group with Lowest Attendance:</strong>
                 {% if session_info.lowest_attendance.group != 'N/A' %}
-                  <span class="text-primary" style="color: #FF9D23;">{{ session_info.lowest_attendance.group }}</span>
+                  <span style="color: #FF9D23;">{{ session_info.lowest_attendance.group }}</span>
                 {% else %}
                   <span class="text-muted">N/A</span>
                 {% endif %}
@@ -45,10 +45,9 @@
         </div>
       {% empty %}
         <div class="col-12">
-          <div class="alert alert-info">No session attendance data available.</div>
+          <div class="alert alert-info text-center">No session attendance data available.</div>
         </div>
       {% endfor %}
     </div>
-   
   </div>
 {% endblock %}
