@@ -21,6 +21,9 @@ urlpatterns = [
     path('supervisor/all_attendance/', views.all_attendance, name='all_attendance'),
     path('supervisor/logout/', views.supervisor_logout, name='supervisor_logout'),
     path('generate-report/', views.generate_attendance_report, name='generate_attendance_report'),
-
+    path('supervisor/sessions/', views.manage_sessions, name='sessions'),
+    path('supervisor/create-session/', views.create_session, name='create_session'),
+    path('edit-session/<int:session_id>/', views.edit_session, name='edit_session'),
+    path('supervisor/delete-session/<int:session_id>/', views.delete_session, name='delete_session'),
 ]
 

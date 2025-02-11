@@ -9,6 +9,7 @@ import io
 import base64
 import matplotlib.pyplot as plt
 from django.db.models import Count, Q
+from datetime import date
 
 
 
@@ -129,6 +130,37 @@ def check_login(request):
         except leaders.DoesNotExist:
             messages.error(request, "Invalid username")
     return redirect("login")
+
+#manage sessions page
+def manage_sessions(request):
+    sessions = Session.objects.all().order_by('-date')
+    today = date.today()
+    return render(request, 'attendance/sessions.html', {'sessions': sessions, 'today': today})
+
+#create session
+def create_session(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        date = request.POST.get('date')
+        session = Session.objects.create(name=name,date=date)
+        return redirect('sessions')
+    return render(request, 'attendance/sessions.html')
+
+#edit session
+def edit_session(request, session_id):
+    session = get_object_or_404(Session, id=session_id)
+    if request.method == 'POST':
+        session.name = request.POST.get('name')
+        session.date = request.POST.get('date')
+        session.save()
+        return redirect('sessions')
+    return render(request, 'attendance/sessions.html', {'session': session})
+
+#delete session
+def delete_session(request, session_id):
+    session = get_object_or_404(Session, id=session_id)
+    session.delete()
+    return redirect('sessions')
 
 def home(request):
     leader = leaders.objects.filter(username=request.session.get('leader')).first()
