@@ -1,3 +1,5 @@
-deeper_env
+# Ignore database files
+*.db
+*.sqlite
 *.sqlite3
 db.sqlite3

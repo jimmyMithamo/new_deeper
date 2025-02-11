@@ -1,17 +1,18 @@
-{% extends "attendance/base.html" %}
+{% extends 'attendance/base.html' %}
+{% load static %}
 {% load custom_filters %}
 
-{% block title %}All Attendance{% endblock %}
+{% block title %}All Attendance{% endblock title%}
 
 {% block content %}
-<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 80vh;">
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center p-0" style="min-height: 80vh;">
     <!-- Search Box -->
-    <div class="w-100 w-md-75 w-lg-50 mb-4 px-3">
+    <div class="w-100 mb-4 px-3">
         <input type="text" id="groupSearch" class="form-control form-control-lg" placeholder="Search for a group..." onkeyup="filterGroups()">
     </div>
 
     <!-- Scrollable Attendance Box -->
-    <div class="scroll-box shadow-lg p-4 bg-white rounded w-100 w-md-75 w-lg-50" style="max-height: 70vh; overflow-y: auto;">
+    <div class="scroll-box shadow-lg p-3 bg-white rounded w-100" style="max-height: 70vh; overflow-y: auto;">
         <h2 class="text-center mb-4 text-primary">Group Attendance</h2>
 
         {% for group, members in attendance_data.items %}
@@ -23,8 +24,8 @@
             </div>
 
             <!-- Responsive Table -->
-            <div class="table-responsive-sm p-3">
-                <table class="table table-bordered table-hover text-center align-middle">
+            <div class="table-responsive p-0 p-md-3">
+                <table class="table table-bordered table-hover text-center align-middle m-0">
                     <thead class="table-dark">
                         <tr>
                             <th>Name</th>
