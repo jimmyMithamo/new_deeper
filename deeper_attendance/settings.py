@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ve+%ibi@2b%7waxy#4k6rfwvjwlu-eeu%wrsjf@dp!dqwh4_$g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.tutumekenya.co.ke', 'tutumekenya.co.ke', '127.0.0.1']
+ALLOWED_HOSTS = ['www.tutumekenya.co.ke', 'tutumekenya.co.ke', '127.0.0.1', 'localhost']
 
 
 # Application definition

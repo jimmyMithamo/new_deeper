@@ -9,11 +9,11 @@
     body {
       background-color: #f4f4f9;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding-top: 70px; /* To prevent content from being hidden behind fixed navbar */
+      padding-top: 80px; /* To prevent content from being hidden behind fixed navbar */
       padding-bottom: 50px; /* To prevent content from overlapping footer */
     }
 
-    /* Solid contrasting color for Navbar */
+    /* Navbar Styling */
     .navbar {
       background-color: #2F4F4F;  /* Dark Slate Gray for good contrast */
     }
@@ -25,10 +25,25 @@
     .navbar-brand, .nav-link {
       color: white !important;
       font-weight: bold;
+      font-size: 1.0rem;  /* Default font size */
     }
 
     .nav-link:hover {
       color: #FFD65A !important; /* Soft Yellow highlight on hover */
+    }
+
+    /* Increase font size on small screens */
+    @media (max-width: 576px) {
+      .navbar-brand, .nav-link {
+        font-size: 1.0rem;  /* Increase font size on small screens */
+      }
+
+      .navbar-brand {
+        font-size: 1.6rem;  /* Make brand text larger on small screens */
+      }
+      .nav-link:hover {
+        color: white !important; /* Revert hover color to white */
+      }
     }
 
     /* Footer Styling */
@@ -41,6 +56,18 @@
       text-align: center;
       padding: 10px 0;
     }
+    /* Increase the size of the toggle button */
+    .navbar-toggler {
+      padding: 0.95rem 1rem;  /* Adjust padding for a larger button */
+      font-size: 1.25rem;     /* Increase font size if using text icons */
+    }
+
+    /* Increase the size of the hamburger icon */
+    .navbar-toggler-icon {
+      width: 1.8em;  /* Increase width */
+      height: 1.0em; /* Increase height */
+    }
+
   </style>
 </head>
 <body>
@@ -48,36 +75,21 @@
   <!-- Navbar Start -->
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Deeper</a>
+      <a class="navbar-brand mx-auto" href="#">Deeper</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" href="{% url 'admin_home' %}">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'assign_leader' %}">Leaders</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'manage_group' %}">Groups</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'view_attendance' %}">Session Attendance</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'all_attendance' %}">Group Attendance</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'generate_attendance_report' %}">Reports</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'supervisor_logout' %}">Logout</a>
-          </li>
+          <li class="nav-item"><a class="nav-link active" href="{% url 'admin_home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'assign_leader' %}">Leaders</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'manage_group' %}">Groups</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'view_attendance' %}">Session Attendance</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'all_attendance' %}">Group Attendance</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'generate_attendance_report' %}">Reports</a></li>
         </ul>
-        <a class="" href="{% url 'supervisor_logout' %}"><button class="bg-danger text-light rounded">Logout</button></a>
+        <a class="nav-link btn btn-danger" href="{% url 'supervisor_logout' %}">Logout</a>
       </div>
     </div>
   </nav>

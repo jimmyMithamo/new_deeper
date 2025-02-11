@@ -6,12 +6,12 @@
 {% block content %}
 <div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 80vh;">
     <!-- Search Box -->
-    <div class="w-100 w-md-75 mb-4 px-3">
+    <div class="w-100 w-md-75 w-lg-50 mb-4 px-3">
         <input type="text" id="groupSearch" class="form-control form-control-lg" placeholder="Search for a group..." onkeyup="filterGroups()">
     </div>
 
     <!-- Scrollable Attendance Box -->
-    <div class="scroll-box shadow-lg p-4 bg-white rounded w-100" style="max-height: 70vh; overflow-y: auto;">
+    <div class="scroll-box shadow-lg p-4 bg-white rounded w-100 w-md-75 w-lg-50" style="max-height: 70vh; overflow-y: auto;">
         <h2 class="text-center mb-4 text-primary">Group Attendance</h2>
 
         {% for group, members in attendance_data.items %}
