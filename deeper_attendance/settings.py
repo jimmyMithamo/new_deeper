@@ -110,18 +110,15 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-
-# This is where Django will collect static files in production
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Do not include this in STATICFILES_DIRS
-
-# Define additional directories for static files
+    # Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'attendance/static'),  # Only app-specific static files
-]
-# Serving media files (if needed)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    os.path.join(BASE_DIR, 'static')
+    ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = 'static/'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = 'media/'  # This is the URL prefix for media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory to store uploaded files
