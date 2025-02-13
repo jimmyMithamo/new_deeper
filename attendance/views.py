@@ -226,6 +226,7 @@ def generate_attendance_report(request):
     groups = Group.objects.all()
     session_reports = []  # This will hold data per session
     members_missed_all = []
+    group_leaders = leaders.objects.all()  # Assuming `leaders` model tracks leaders
 
     # Calculate members who missed all sessions
     for member in Member.objects.all():
@@ -234,18 +235,27 @@ def generate_attendance_report(request):
 
     # For each session, compute the attendance data
     for session in sessions:
-        # Get all attendance records for this session
         session_attendance_qs = Attendance.objects.filter(session=session)
         session_total_present = session_attendance_qs.filter(status=True).count()
         session_total_absent = session_attendance_qs.filter(status=False).count()
 
-        # Compute group-specific attendance for this session
+        # Track submitted attendance groups count
+        submitted_groups_count = 0
         group_data = []
+
         for group in groups:
             present = session_attendance_qs.filter(member__group=group, status=True).count()
             absent = session_attendance_qs.filter(member__group=group, status=False).count()
+
+            # Check if the leader of the group has marked attendance (submitted)
+            leader = group.leader  # Assuming each `Group` has a `leader` field
+            leader_attendance = session_attendance_qs.filter(member=leader, submitted = "True").first()
+
+            if leader_attendance and leader_attendance.submitted:
+                submitted_groups_count += 1  # Count only if the leader submitted attendance
+
             group_data.append({
-                'group': group.name,  # use group name
+                'group': group.name,  
                 'total_present': present,
                 'total_absent': absent,
             })
@@ -266,10 +276,11 @@ def generate_attendance_report(request):
             'group_attendance': group_data,
             'highest_attendance': highest,
             'lowest_attendance': lowest,
+            'submitted_groups_count': submitted_groups_count,  # Number of groups that submitted attendance
         })
 
     context = {
-        'session_attendance': session_reports,  # Each item is a report for one session
+        'session_attendance': session_reports,
         'members_missed_all': members_missed_all,
     }
     return render(request, 'attendance/attendance_report.html', context)

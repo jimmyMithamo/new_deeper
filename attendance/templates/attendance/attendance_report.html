@@ -22,6 +22,8 @@
                 <span class="text-danger">{{ session_info.total_absent }}</span>
               </p>
               <hr>
+              <p class = "text-success">{{ session_info.submitted_groups_count }} Groups submitted</p>
+              <hr>
               <p>
                 <strong>Group with Highest Attendance:</strong>
                 {% if session_info.highest_attendance.group != 'N/A' %}
