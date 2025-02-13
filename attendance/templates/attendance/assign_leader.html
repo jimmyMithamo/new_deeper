@@ -1,65 +1,111 @@
-{% extends 'attendance/base.html' %}
+{% extends "attendance/base.html" %}
+
+{% block title %}Assign Leader | Deeper Attendance{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 d-md-block d-none col-lg-5  bg-light sidebar collapse" id="sidebarMenu">
-            <div class="sidebar">
-                <h4>Groups & Leaders</h4>
-                <ul>
-                    {% for group in groups %}
-                        <li>
-                            <strong>{{ group.name }}</strong><br>
-                            <p class='text-info fw-bolder'>{{ group.leader.name }}</p>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main Content -->
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-7 px-md-4 col-12">
-            <div class="card shadow-lg p-4 mt-3">
-                <h1 class="text-center mb-4">Assign Leader to Group</h1>
+<div class="container py-5 mt-5">
+    <div class="row justify-content-center">
+        
+        <!-- Mobile View -->
+        <div class="col-12 d-md-none">
+            <div class="card shadow-lg p-4 w-100">
+                <h1 class="text-center mb-4 fs-3 fw-bold">Assign Leader to Group</h1>
 
                 {% if message %}
-                    <div class="alert alert-info text-center" role="alert">
+                    <div class="alert alert-info text-center fs-5" role="alert">
                         {{ message }}
                     </div>
                 {% endif %}
 
                 <form method="POST">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="name">Leader Name:</label>
-                        <select class="form-control" name="name" required>
+                    <div class="mb-3">
+                        <label for="name" class="fs-5 fw-bold">Leader Name:</label>
+                        <select class="form-select fs-5" name="name" required>
+                            <option value="">Select Leader</option>
                             {% for member in members %}
                                 <option value="{{ member.name }}">{{ member.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="username">Leader Username:</label>
-                        <input type="text" class="form-control" name="username" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="group">Group:</label>
-                        <select class="form-control" name="group" required>
+                    <div class="mb-3">
+                        <label for="group" class="fs-5 fw-bold">Group:</label>
+                        <select class="form-select fs-5" name="group" required>
+                            <option value="">Select Group</option>
                             {% for group in groups %}
                                 <option value="{{ group.name }}">{{ group.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-success btn-block">Assign Leader</button>
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Assign Leader</button>
                 </form>
 
-                <button class="btn btn-primary btn-block mt-3" onclick="window.location.href='{% url 'admin_home' %}'">Go Back Home</button>
             </div>
-        </main>
+        </div>
+
+        <!-- Desktop View -->
+        <div class="col-md-10 col-lg-8 d-none d-md-block">
+            <div class="row">
+                <!-- Sidebar -->
+                <nav class="col-md-4 bg-light p-4 shadow-sm">
+                    <h4 class="fw-bold">Groups & Leaders</h4>
+                    <ul class="list-unstyled">
+                        {% for group in groups %}
+                            <li class="mb-3">
+                                <strong>{{ group.name }}</strong><br>
+                                <p class="text-info fw-bold">{{ group.leader.name }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+
+                <!-- Main Content -->
+                <main class="col-md-8">
+                    <div class="card shadow-lg p-4">
+                        <h1 class="text-center mb-4 fs-2 fw-bold">Assign Leader to Group</h1>
+
+                        {% if message %}
+                            <div class="alert alert-info text-center fs-5" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="fs-5 fw-bold">Leader Name:</label>
+                                <select class="form-select fs-5" name="name" required>
+                                    {% for member in members %}
+                                        <option value="{{ member.name }}">{{ member.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="username" class="fs-5 fw-bold">Leader Username:</label>
+                                <input type="text" class="form-control fs-5" name="username" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="group" class="fs-5 fw-bold">Group:</label>
+                                <select class="form-select fs-5" name="group" required>
+                                    {% for group in groups %}
+                                        <option value="{{ group.name }}">{{ group.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Assign Leader</button>
+                        </form>
+
+                        <button class="btn btn-primary btn-lg w-100 mt-3" onclick="window.location.href='{% url 'admin_home' %}'">Go Back Home</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+
     </div>
 </div>
 {% endblock %}
