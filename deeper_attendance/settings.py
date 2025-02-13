@@ -113,14 +113,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
-# Where Django will collect static files for production
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  
+# This is where Django will collect static files in production
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Do not include this in STATICFILES_DIRS
 
-# Directories where Django will look for static files
+# Define additional directories for static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'attendance/static'),
+    os.path.join(BASE_DIR, 'attendance/static'),  # Only app-specific static files
 ]
-
 # Serving media files (if needed)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
