@@ -117,7 +117,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Directories where Django will look for static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'your_app/static'),
+    os.path.join(BASE_DIR, 'attendance/static'),
 ]
 
 # Serving media files (if needed)
