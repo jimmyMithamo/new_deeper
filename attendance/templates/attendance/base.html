@@ -35,7 +35,7 @@
       <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
         
         <!-- Centered Links -->
-        <ul class="navbar-nav mx-auto">
+        <ul class="navbar-nav mx-auto ">
           <li class="nav-item">
             <a class="nav-link text-white" href="{% url 'assign_leader' %}">Leaders</a>
           </li>
@@ -55,6 +55,11 @@
             <a class="nav-link text-white" href="{% url 'generate_attendance_report' %}">Reports</a>
           </li>
         </ul>
+        <style>
+          .nav-link:hover {
+            color: yellow !important;
+          }
+        </style>
 
         <!-- Logout Button -->
         <a class="btn btn-danger text-light btn-outline-danger mt-2 mt-lg-0" href="{% url 'supervisor_logout' %}">Logout</a>

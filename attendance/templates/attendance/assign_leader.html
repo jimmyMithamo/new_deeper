@@ -20,6 +20,67 @@
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">
+                        <label for="name" class="fs-6 fw-bold">Leader Name:</label>
+                        <select class="form-select fs-6" name="name" required>
+                            <option value="">Select Leader</option>
+                            {% for member in members %}
+                                <option value="{{ member.name }}">{{ member.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="fs-6 fw-bold">Leader Username:</label>
+                        <input placeholder="leadername@groupnumber" type="text" class="form-control fs-6" name="username" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="group" class="fs-6 fw-bold">Group:</label>
+                        <select class="form-select fs-6" name="group" required>
+                            <option value="">Select Group</option>
+                            {% for group in groups %}
+                                <option value="{{ group.name }}">{{ group.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Assign Leader</button>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Desktop View -->
+<div class="col-md-10 col-lg-8 d-none d-md-block">
+    <div class="row">
+        
+        <!-- Sidebar (Scrollable Navigation) -->
+        <nav class="col-md-4 bg-light shadow-sm p-4" 
+             style="height: 50vh; overflow-y: auto; position: sticky; top: 0;">
+            <h4 class="fw-bold">Groups & Leaders</h4>
+            <ul class="list-unstyled">
+                {% for group in groups %}
+                    <li class="mb-3">
+                        <strong>{{ group.name }}</strong><br>
+                        <p class="text-success fw-bold">{{ group.leader.name }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-8">
+            <div class="card shadow-lg p-4" style="height: 50vh;">
+                <h1 class="text-center mb-4 fs-2 fw-bold">Assign Leader to Group</h1>
+
+                {% if message %}
+                    <div class="alert alert-info text-center fs-5" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
                         <label for="name" class="fs-5 fw-bold">Leader Name:</label>
                         <select class="form-select fs-5" name="name" required>
                             <option value="">Select Leader</option>
@@ -27,6 +88,11 @@
                                 <option value="{{ member.name }}">{{ member.name }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="username" class="fs-5 fw-bold">Leader Username:</label>
+                        <input placeholder="leadername@groupnumber" type="text" class="form-control fs-5" name="username" required>
                     </div>
 
                     <div class="mb-3">
@@ -42,70 +108,10 @@
                     <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Assign Leader</button>
                 </form>
 
+                
             </div>
-        </div>
-
-        <!-- Desktop View -->
-        <div class="col-md-10 col-lg-8 d-none d-md-block">
-            <div class="row">
-                <!-- Sidebar -->
-                <nav class="col-md-4 bg-light p-4 shadow-sm">
-                    <h4 class="fw-bold">Groups & Leaders</h4>
-                    <ul class="list-unstyled">
-                        {% for group in groups %}
-                            <li class="mb-3">
-                                <strong>{{ group.name }}</strong><br>
-                                <p class="text-info fw-bold">{{ group.leader.name }}</p>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </nav>
-
-                <!-- Main Content -->
-                <main class="col-md-8">
-                    <div class="card shadow-lg p-4">
-                        <h1 class="text-center mb-4 fs-2 fw-bold">Assign Leader to Group</h1>
-
-                        {% if message %}
-                            <div class="alert alert-info text-center fs-5" role="alert">
-                                {{ message }}
-                            </div>
-                        {% endif %}
-
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="name" class="fs-5 fw-bold">Leader Name:</label>
-                                <select class="form-select fs-5" name="name" required>
-                                    {% for member in members %}
-                                        <option value="{{ member.name }}">{{ member.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="username" class="fs-5 fw-bold">Leader Username:</label>
-                                <input type="text" class="form-control fs-5" name="username" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="group" class="fs-5 fw-bold">Group:</label>
-                                <select class="form-select fs-5" name="group" required>
-                                    {% for group in groups %}
-                                        <option value="{{ group.name }}">{{ group.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Assign Leader</button>
-                        </form>
-
-                        <button class="btn btn-primary btn-lg w-100 mt-3" onclick="window.location.href='{% url 'admin_home' %}'">Go Back Home</button>
-                    </div>
-                </main>
-            </div>
-        </div>
-
+        </main>
     </div>
 </div>
+
 {% endblock %}
