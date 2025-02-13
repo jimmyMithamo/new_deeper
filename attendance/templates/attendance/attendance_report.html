@@ -3,8 +3,15 @@
 {% block title %}Attendance Report{% endblock title %}
 
 {% block content %}
-  <div class="container ">
+  <div class="container">
     <h1 class="text-center mb-4">Attendance Report</h1>
+
+    <!-- Line Chart for Attendance Trend -->
+    <div class="card p-3 mb-4 shadow-sm">
+      <h4 class="text-center">Attendance Trend Over Sessions</h4>
+      <canvas id="attendanceChart"></canvas>
+    </div>
+
     <div class="row d-flex justify-content-center">
       {% for session_info in session_attendance %}
         <div class="col-12 col-md-4 col-lg-3">
@@ -22,7 +29,7 @@
                 <span class="text-danger">{{ session_info.total_absent }}</span>
               </p>
               <hr>
-              <p class = "text-success">{{ session_info.submitted_groups_count }} Groups submitted</p>
+              <p class="text-success">{{ session_info.submitted_groups_count }} Groups submitted</p>
               <hr>
               <p>
                 <strong>Group with Highest Attendance:</strong>
@@ -52,4 +59,38 @@
       {% endfor %}
     </div>
   </div>
+
+  <!-- Include Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    var sessionLabels = {{ session_labels|safe }};
+    var attendanceValues = {{ attendance_values|safe }};
+
+    var ctx = document.getElementById('attendanceChart').getContext('2d');
+    var attendanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: sessionLabels,  // X-axis: Session Dates
+            datasets: [
+                {
+                    label: 'Total Attendance',
+                    data: attendanceValues,  // Y-axis: Attendance count
+                    borderColor: 'blue',  // Blue Line
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: "Session Date" }},
+                y: { title: { display: true, text: "Attendance Count" }, beginAtZero: true }
+            }
+        }
+    });
+  </script>
+
 {% endblock %}

@@ -226,7 +226,10 @@ def generate_attendance_report(request):
     groups = Group.objects.all()
     session_reports = []  # This will hold data per session
     members_missed_all = []
-    group_leaders = leaders.objects.all()  # Assuming `leaders` model tracks leaders
+    session_labels = []  # Store session dates
+    attendance_values = []  # Store total attendance per session
+    submitted_groups_values = []  # Store submitted groups count
+    group_leaders = leaders.objects.all()
 
     # Calculate members who missed all sessions
     for member in Member.objects.all():
@@ -249,24 +252,29 @@ def generate_attendance_report(request):
 
             # Check if the leader of the group has marked attendance (submitted)
             leader = group.leader  # Assuming each `Group` has a `leader` field
-            leader_attendance = session_attendance_qs.filter(member=leader, submitted = "True").first()
+            leader_attendance = session_attendance_qs.filter(member=leader, submitted="True").first()
 
             if leader_attendance and leader_attendance.submitted:
                 submitted_groups_count += 1  # Count only if the leader submitted attendance
 
             group_data.append({
-                'group': group.name,  
+                'group': group.name,
                 'total_present': present,
                 'total_absent': absent,
             })
 
-        # Determine which group had the highest and lowest present counts in this session
+        # Determine highest and lowest attendance groups
         if group_data:
             highest = max(group_data, key=lambda x: x['total_present'])
             lowest = min(group_data, key=lambda x: x['total_present'])
         else:
             highest = {'group': 'N/A', 'total_present': 0}
             lowest = {'group': 'N/A', 'total_present': 0}
+
+        # Store session data for graphs
+        session_labels.append(session.date.strftime("%Y-%m-%d"))
+        attendance_values.append(session_total_present)
+        submitted_groups_values.append(submitted_groups_count)
 
         # Build a session-specific report dictionary
         session_reports.append({
@@ -276,12 +284,14 @@ def generate_attendance_report(request):
             'group_attendance': group_data,
             'highest_attendance': highest,
             'lowest_attendance': lowest,
-            'submitted_groups_count': submitted_groups_count,  # Number of groups that submitted attendance
+            'submitted_groups_count': submitted_groups_count,
         })
 
     context = {
         'session_attendance': session_reports,
         'members_missed_all': members_missed_all,
+        'session_labels': session_labels,
+        'attendance_values': attendance_values,
+        'submitted_groups_values': submitted_groups_values,
     }
     return render(request, 'attendance/attendance_report.html', context)
-
