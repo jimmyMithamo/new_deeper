@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,8 +24,9 @@
     <div class="container-fluid">
       
       <!-- Brand -->
-      <a class="navbar-brand fw-bold text-warning" href="{% url 'admin_home' %}">Deeper</a>
-      
+      <a class="navbar-brand fw-bold text-warning" href="{% url 'admin_home' %}">
+        <img src="{% static 'images/mamlaka logo.png' %}" alt="Deeper Logo" height="40">
+      </a>      
       <!-- Toggler for Mobile -->
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
