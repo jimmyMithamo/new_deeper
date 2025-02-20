@@ -213,7 +213,7 @@ def request_status_change(request, member_id):
     member.save()
     StatusChangeRequest.objects.create(member=member, requested_status=new_status)
     messages.info(request, f"Status change to '{new_status}' requested.")
-    return redirect('member_detail', member_id=member_id)
+    return redirect('members')
 
 # Admin panel to view requests
 def admin_status_requests(request):
