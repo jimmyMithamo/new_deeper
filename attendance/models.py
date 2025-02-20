@@ -69,3 +69,13 @@ class Attendance(models.Model):
     def __str__(self):
         return f"{self.member} - {self.session}"
     
+
+class StatusChangeRequest(models.Model):
+        member = models.ForeignKey(Member, on_delete=models.CASCADE)
+        requested_status = models.CharField(max_length=20, choices=[('Active', 'Active'), ('Dropped', 'Dropped')])
+        approved = models.BooleanField(default=False)
+        requested_at = models.DateTimeField(auto_now_add=True)
+        reviewed = models.BooleanField(default=False)
+
+        def __str__(self):
+            return f"{self.member.name} - {self.requested_status} (Approved: {self.approved})"

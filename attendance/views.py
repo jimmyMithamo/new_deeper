@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_protect
-from .models import Attendance, leaders, Group, Member, Session
+from .models import Attendance, leaders, Group, Member, Session, StatusChangeRequest
 import io
 import base64
 import matplotlib.pyplot as plt
@@ -199,20 +199,60 @@ def members(request):
 
 
 
+
+# Leader requesting a status change
+def request_status_change(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    old_status = member.status
+    if old_status == 'Active':
+        new_status = 'Dropped'
+    else:
+        new_status = 'Active'
+    StatusChangeRequest.objects.create(member=member, requested_status=new_status)
+    messages.info(request, f"Status change to '{new_status}' requested.")
+    return redirect('member_detail', member_id=member_id)
+
+# Admin panel to view requests
+def admin_status_requests(request):
+    requests = StatusChangeRequest.objects.filter(reviewed=False)
+    return render(request, "attendance/status_requests.html", {"requests": requests})
+
+
+# Approve status change request
+def approve_status_request(request, request_id):
+    status_request = get_object_or_404(StatusChangeRequest, id=request_id)
+    status_request.member.status = status_request.requested_status
+    status_request.member.save()
+    status_request.approved = True
+    status_request.reviewed = True
+    status_request.save()
+    return JsonResponse({'message': f"Status change for {status_request.member.name} approved."})
+
+
+
+# Reject status change request
+def reject_status_request(request, request_id):
+    status_request = get_object_or_404(StatusChangeRequest, id=request_id)
+    status_request.reviewed = True
+    status_request.save()
+    return JsonResponse({'message': f"Status change for {status_request.member.name} rejected."})
+
 def member_detail(request, member_id):
     member = get_object_or_404(Member, id=member_id)
 
-    if request.method == "POST":
-        new_status = request.POST.get('status')
+    if request.method == "POST" and not request.user.is_staff:
+        new_status = request.POST.get('status')  # Retrieves the submitted status value
         if new_status in ['Active', 'Dropped']:
-            member.status = new_status
-            member.save()
-            messages.success(request, f"Status updated to {new_status}!")
+            StatusChangeRequest.objects.create(
+                member=member, 
+                requested_status=new_status
+            )
+            messages.info(request, f"Status change to '{new_status}' requested.")
             return redirect('member_detail', member_id=member_id)
-
-    attended_sessions = Attendance.objects.filter(member=member, status=True).values('session__name', 'session__date')
-    missed_sessions = Attendance.objects.filter(member=member, status=False).values('session__name', 'session__date')
-
+    
+    # Handle GET request (page load)
+    attended_sessions = Attendance.objects.filter(member=member, status=True)
+    missed_sessions = Attendance.objects.filter(member=member, status=False)
     total_sessions = attended_sessions.count() + missed_sessions.count()
     attendance_percentage = round((attended_sessions.count() / total_sessions) * 100, 2) if total_sessions else 0
 
@@ -222,8 +262,36 @@ def member_detail(request, member_id):
         'missed_sessions': missed_sessions,
         'attendance_percentage': attendance_percentage,
     }
-
     return render(request, 'attendance/member_detail.html', context)
+
+
+@login_required
+def manage_status_requests(request):
+    if not request.user.is_staff:
+        return redirect('supervisor_login')
+
+    requests = StatusChangeRequest.objects.filter(reviewed=False)
+
+    if request.method == "POST":
+        request_id = request.POST.get('request_id')
+        decision = request.POST.get('decision')
+        status_request = get_object_or_404(StatusChangeRequest, id=request_id)
+
+        if decision == "approve":
+            status_request.member.status = status_request.requested_status
+            status_request.member.save()
+            status_request.approved = True
+            messages.success(request, f"Status change for {status_request.member.name} approved.")
+        else:
+            messages.info(request, f"Status change for {status_request.member.name} rejected.")
+
+        status_request.reviewed = True
+        status_request.save()
+        return redirect('manage_status_requests')
+
+    return render(request, 'attendance/manage_status_requests.html', {'requests': requests})
+
+
 
 def attendance(request, session_id):
     leader = leaders.objects.get(username=request.session.get('leader'))

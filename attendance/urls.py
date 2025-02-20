@@ -27,6 +27,9 @@ urlpatterns = [
     path('supervisor/delete-session/<int:session_id>/', views.delete_session, name='delete_session'),
     path('members/', views.members, name='members'),
     path('members/<int:member_id>/', views.member_detail, name='member_detail'),
-
+    path("status/request/<int:member_id>/", views.request_status_change, name="request_status_change"),
+    path("supervisor/status-requests/", views.admin_status_requests, name="admin_status_requests"),
+    path("supervisor/status-requests/approve/<int:request_id>/", views.approve_status_request, name="approve_status_request"),
+    path("supervisor/status-requests/reject/<int:request_id>/", views.reject_status_request, name="reject_status_request"),
 ]
 
