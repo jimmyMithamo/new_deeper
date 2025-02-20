@@ -33,7 +33,7 @@
 
             <div class="row mt-4">
                 <div class="col-md-6">
-                    <h5 class="text-success">✅ Sessions Attended:</h5>
+                    <h5 class="text-success">Sessions Attended:</h5>
                     <ul class="list-group">
                         {% for session in attended_sessions %}
                             <li class="list-group-item">{{ session.session__name }} - <small>{{ session.session__date }}</small></li>
@@ -43,8 +43,8 @@
                     </ul>
                 </div>
 
-                <div class="col-md-6">
-                    <h5 class="text-danger">❌ Sessions Missed:</h5>
+                <div class="col-md-6 mt-4">
+                    <h5 class="text-danger">Sessions Missed:</h5>
                     <ul class="list-group">
                         {% for session in missed_sessions %}
                             <li class="list-group-item">{{ session.session__name }} - <small>{{ session.session__date }}</small></li>
