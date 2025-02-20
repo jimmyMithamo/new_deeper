@@ -200,30 +200,20 @@ def members(request):
 
 
 
+# Leader requesting a status change
 def request_status_change(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     old_status = member.status
-    new_status = 'Dropped' if old_status == 'Active' else 'Active'
-
-    # Update member status to 'Pending' for approval
-    member.status = 'Pending'
+    if old_status == 'Active':
+        new_status = 'Dropped'
+    else:
+        new_status = 'Active'
+    pending_status = 'Pending'
+    member.status = pending_status
     member.save()
-
-    # Create a new status change request
-    status_change_request = StatusChangeRequest.objects.create(
-        member=member,
-        requested_status=new_status,
-    )
-
-    try:
-        # Notify the admin with the updated function
-        notify_admin_status_change(request, member, new_status, request.user)
-        messages.success(request, f"Status change to '{new_status}' requested successfully.")
-    except Exception as e:
-        messages.error(request, f"Status change requested but failed to send email: {e}")
-
-    return redirect('home')
-
+    StatusChangeRequest.objects.create(member=member, requested_status=new_status)
+    messages.info(request, f"Status change to '{new_status}' requested.")
+    return redirect('members')
 
 # Admin panel to view requests
 def admin_status_requests(request):
@@ -430,58 +420,3 @@ def generate_attendance_report(request):
     }
     return render(request, 'attendance/attendance_report.html', context)
 
-
-
-
-
-from django.conf import settings
-from django.core.mail import send_mail
-from django.urls import reverse
-from django.contrib.sites.shortcuts import get_current_site
-
-def notify_admin_status_change(request, member, requested_status, requested_by):
-    subject = f"Status Change Requested for {member.name}"
-
-    # Construct the admin review URL
-    current_site = get_current_site(request)
-    review_url = f"http://{current_site.domain}{reverse('members')}"
-
-    # Plain text message
-    message = (
-        f"Hello Admin,\n\n"
-        f"A status change has been requested:\n"
-        f"Member: {member.name}\n"
-        f"Requested Status: {requested_status}\n"
-        f"Requested By: {requested_by.username}\n\n"
-        f"Review the request here: {review_url}\n\n"
-        f"Best regards,\nYour Attendance System"
-    )
-
-    # HTML version of the email
-    html_message = f"""
-    <html>
-    <body>
-        <p>Hello Admin,</p>
-        <p>A status change has been requested:</p>
-        <ul>
-            <li><strong>Member:</strong> {member.name}</li>
-            <li><strong>Requested Status:</strong> {requested_status}</li>
-            <li><strong>Requested By:</strong> {requested_by.username}</li>
-        </ul>
-        <p><a href="{review_url}" style="background-color:#16C47F;color:white;padding:10px 15px;text-decoration:none;border-radius:5px;">Review Request</a></p>
-        <p>Best regards,<br>Your Attendance System</p>
-    </body>
-    </html>
-    """
-
-    try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [settings.ADMIN_EMAIL],
-            fail_silently=False,
-            html_message=html_message
-        )
-    except Exception as e:
-        print(f"Error sending email: {e}")
