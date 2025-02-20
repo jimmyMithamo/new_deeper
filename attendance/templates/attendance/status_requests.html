@@ -14,17 +14,23 @@
                         <div class="card-body d-flex flex-column justify-content-between">
                             <p class="mb-3" style="font-size: 1rem; color: #555;">
                                 <strong>{{ req.member.name }}</strong> requested status change to 
-                                <span class="badge {% if req.requested_status == 'Active' %}bg-success{% else %}bg-danger{% endif %}" style="padding: 0.4em 0.7em; font-size: 0.85rem; border-radius: 1rem;">
+                                <span class="badge {% if req.requested_status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
                                     {{ req.requested_status }}
                                 </span>
                             </p>
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-sm" onclick="handleRequest({{ req.id }}, 'approve')" style="background-color: #16C47F; color: white; font-weight: 600; border-radius: 1rem;">
-                                    Approve
-                                </button>
-                                <button class="btn btn-sm" onclick="handleRequest({{ req.id }}, 'reject')" style="background-color: #F93827; color: white; font-weight: 600; border-radius: 1rem;">
-                                    Reject
-                                </button>
+                                <form method="POST" action="{% url 'approve_status_request' req.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm" style="background-color: #16C47F; color: white; font-weight: 600; border-radius: 1rem;">
+                                        Approve
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'reject_status_request' req.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm" style="background-color: #F93827; color: white; font-weight: 600; border-radius: 1rem;">
+                                        Reject
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -35,17 +41,4 @@
         <p class="text-center" style="font-size: 1.1rem; color: #777;">No status change requests at the moment.</p>
     {% endif %}
 </div>
-
-<script>
-function handleRequest(requestId, action) {
-    fetch(`/supervisor/status-requests/${action}/${requestId}/`)
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);  // Show the message
-            setTimeout(() => location.reload(), 500);  // Reload after a short delay
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-</script>
 {% endblock %}
