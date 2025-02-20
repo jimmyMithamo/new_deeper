@@ -127,3 +127,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = 'media/'  # This is the URL prefix for media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directory to store uploaded files
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.tutumekenya.co.ke'       # Outgoing SMTP server
+EMAIL_PORT = 465                            # Secure SSL/TLS port
+EMAIL_USE_SSL = True                        # Use SSL for secure connection
+EMAIL_HOST_USER = 'deepeer@tutumekenya.co.ke'  # Your email address
+EMAIL_HOST_PASSWORD = 'deeper@2025'    # Email account password
+DEFAULT_FROM_EMAIL = 'deepeer@tutumekenya.co.ke'
