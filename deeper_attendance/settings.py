@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ve+%ibi@2b%7waxy#4k6rfwvjwlu-eeu%wrsjf@dp!dqwh4_$g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['www.tutumekenya.co.ke', 'tutumekenya.co.ke', '127.0.0.1', 'localhost']
 
@@ -68,7 +68,7 @@ WSGI_APPLICATION = 'deeper_attendance.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'deeper.sqlite3',
     }
 }
 
@@ -110,13 +110,18 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-    # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Folder for your source static files
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-    ]
+    BASE_DIR / 'static',  # Ensure this directory exists
+]
+
+# Directory where collected static files will be stored (after `collectstatic`)
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATIC_URL = 'static/'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 

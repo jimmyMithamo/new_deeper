@@ -10,6 +10,9 @@ import base64
 import matplotlib.pyplot as plt
 from django.db.models import Count, Q
 from datetime import date
+import json
+from django.http import JsonResponse
+
 
 
 
@@ -175,6 +178,52 @@ def home(request):
         "leader_name": request.session.get('leader_name', '').split()[0],
     }
     return render(request, "attendance/home.html", context)
+
+def members(request):
+    leader = request.user
+    leader = leaders.objects.filter(username=request.session.get('leader')).first()
+
+    group = leader.group
+    members = Member.objects.filter(group=group)
+
+    members_data = []
+    for member in members:
+        members_data.append({
+            'id': member.id,
+            'name': member.name,
+            'status': member.status,
+            'attendance_percentage': member.get_attendance_percentage(),
+        })
+
+    return render(request, 'attendance/members.html', {'members': members_data})
+
+
+
+def member_detail(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+
+    if request.method == "POST":
+        new_status = request.POST.get('status')
+        if new_status in ['Active', 'Dropped']:
+            member.status = new_status
+            member.save()
+            messages.success(request, f"Status updated to {new_status}!")
+            return redirect('member_detail', member_id=member_id)
+
+    attended_sessions = Attendance.objects.filter(member=member, status=True).values('session__name', 'session__date')
+    missed_sessions = Attendance.objects.filter(member=member, status=False).values('session__name', 'session__date')
+
+    total_sessions = attended_sessions.count() + missed_sessions.count()
+    attendance_percentage = round((attended_sessions.count() / total_sessions) * 100, 2) if total_sessions else 0
+
+    context = {
+        'member': member,
+        'attended_sessions': attended_sessions,
+        'missed_sessions': missed_sessions,
+        'attendance_percentage': attendance_percentage,
+    }
+
+    return render(request, 'attendance/member_detail.html', context)
 
 def attendance(request, session_id):
     leader = leaders.objects.get(username=request.session.get('leader'))

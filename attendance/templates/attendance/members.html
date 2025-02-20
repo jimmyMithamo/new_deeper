@@ -1,0 +1,41 @@
+{% extends 'attendance/base_user.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Members List</h2>
+    <div class="mb-3">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search members by name...">
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+                <tr class="{% cycle 'table-light' 'table-secondary' %}" onclick="window.location='{% url 'member_detail' member.id %}'" style="cursor: pointer;">
+                    <td>{{ member.name }}</td>
+                    <td>
+                        <span class="badge {% if member.status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ member.status }}
+                        </span>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="2" class="text-center">No members found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'attendance/base_user.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Member Details: {{ member.name }}</h3>
+            <a href="{% url 'members' %}" class="btn btn-secondary btn-sm">← Back to Members List</a>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> 
+                        <span class="badge {% if member.status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ member.status }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <form method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="status" value="{% if member.status == 'Active' %}Dropped{% else %}Active{% endif %}" class="btn btn-outline-primary btn-sm">
+                            Change Status
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <p><strong>Attendance Percentage:</strong> 
+                <span class="badge bg-info text-dark">{{ attendance_percentage }}%</span>
+            </p>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h5 class="text-success">✅ Sessions Attended:</h5>
+                    <ul class="list-group">
+                        {% for session in attended_sessions %}
+                            <li class="list-group-item">{{ session.session__name }} - <small>{{ session.session__date }}</small></li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No attended sessions.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="text-danger">❌ Sessions Missed:</h5>
+                    <ul class="list-group">
+                        {% for session in missed_sessions %}
+                            <li class="list-group-item">{{ session.session__name }} - <small>{{ session.session__date }}</small></li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">No missed sessions.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

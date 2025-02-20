@@ -1,16 +1,27 @@
 from django.db import models
 from django.utils import timezone
 
-# model for members
 class Member(models.Model):
+    STATUS_CHOICES = [
+        ('Active', 'Active'),
+        ('Dropped', 'Dropped'),
+    ]
+
     name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     group = models.ForeignKey("Group", on_delete=models.CASCADE, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Active')  # New field
 
     def __str__(self):
         return self.name
     
+    def get_attendance_percentage(self):
+        total_sessions = Attendance.objects.filter(member=self).count()
+        attended_sessions = Attendance.objects.filter(member=self, status='True').count()
+
+        return round((attended_sessions / total_sessions) * 100, 2) if total_sessions else 0
+
 class leaders(models.Model):
     name = models.ForeignKey(Member, on_delete=models.CASCADE)
     username = models.CharField(max_length=100, null=True, blank=True)

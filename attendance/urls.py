@@ -25,5 +25,8 @@ urlpatterns = [
     path('supervisor/create-session/', views.create_session, name='create_session'),
     path('edit-session/<int:session_id>/', views.edit_session, name='edit_session'),
     path('supervisor/delete-session/<int:session_id>/', views.delete_session, name='delete_session'),
+    path('members/', views.members, name='members'),
+    path('members/<int:member_id>/', views.member_detail, name='member_detail'),
+
 ]
 
