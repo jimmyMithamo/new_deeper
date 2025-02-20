@@ -208,6 +208,9 @@ def request_status_change(request, member_id):
         new_status = 'Dropped'
     else:
         new_status = 'Active'
+    pending_status = 'Pending'
+    member.status = pending_status
+    member.save()
     StatusChangeRequest.objects.create(member=member, requested_status=new_status)
     messages.info(request, f"Status change to '{new_status}' requested.")
     return redirect('member_detail', member_id=member_id)
