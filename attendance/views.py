@@ -226,8 +226,8 @@ def approve_status_request(request, request_id):
     status_request.approved = True
     status_request.reviewed = True
     status_request.save()
-    return JsonResponse({'message': f"Status change for {status_request.member.name} approved."})
-
+    messages.success(request, f"Status change for {status_request.member.name} approved.")
+    return redirect('admin_status_requests')
 
 
 # Reject status change request
@@ -235,7 +235,8 @@ def reject_status_request(request, request_id):
     status_request = get_object_or_404(StatusChangeRequest, id=request_id)
     status_request.reviewed = True
     status_request.save()
-    return JsonResponse({'message': f"Status change for {status_request.member.name} rejected."})
+    messages.info(request, f"Status change for {status_request.member.name} rejected.")
+    return redirect('admin_status_requests')
 
 def member_detail(request, member_id):
     member = get_object_or_404(Member, id=member_id)
