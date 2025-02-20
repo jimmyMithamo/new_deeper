@@ -345,38 +345,42 @@ def all_attendance(request):
 def generate_attendance_report(request):
     sessions = Session.objects.all().order_by("date")
     groups = Group.objects.all()
-    session_reports = []  # This will hold data per session
+    session_reports = []
     members_missed_all = []
-    session_labels = []  # Store session dates
-    attendance_values = []  # Store total attendance per session
-    submitted_groups_values = []  # Store submitted groups count
-    group_leaders = leaders.objects.all()
+    session_labels = []
+    attendance_values = []
+    submitted_groups_values = []
+
+    # New: Store groups that have not submitted per session
+    non_submitted_groups_per_session = {}
 
     # Calculate members who missed all sessions
     for member in Member.objects.all():
         if not Attendance.objects.filter(member=member, status=True).exists():
             members_missed_all.append(member)
 
-    # For each session, compute the attendance data
+    # Process each session
     for session in sessions:
         session_attendance_qs = Attendance.objects.filter(session=session)
         session_total_present = session_attendance_qs.filter(status=True).count()
         session_total_absent = session_attendance_qs.filter(status=False).count()
 
-        # Track submitted attendance groups count
         submitted_groups_count = 0
         group_data = []
+        non_submitted_groups = []  # Track non-submitted groups for this session
 
         for group in groups:
             present = session_attendance_qs.filter(member__group=group, status=True).count()
             absent = session_attendance_qs.filter(member__group=group, status=False).count()
 
-            # Check if the leader of the group has marked attendance (submitted)
-            leader = group.leader  # Assuming each `Group` has a `leader` field
-            leader_attendance = session_attendance_qs.filter(member=leader, submitted="True").first()
+            # Check if the group's leader has submitted attendance
+            leader = group.leader  # Assuming `Group` model has a `leader` relation
+            leader_attendance = session_attendance_qs.filter(member=leader, submitted=True).first()
 
-            if leader_attendance and leader_attendance.submitted:
-                submitted_groups_count += 1  # Count only if the leader submitted attendance
+            if leader_attendance:
+                submitted_groups_count += 1
+            else:
+                non_submitted_groups.append(group.name)  # Add group to non-submitted list
 
             group_data.append({
                 'group': group.name,
@@ -384,20 +388,17 @@ def generate_attendance_report(request):
                 'total_absent': absent,
             })
 
-        # Determine highest and lowest attendance groups
-        if group_data:
-            highest = max(group_data, key=lambda x: x['total_present'])
-            lowest = min(group_data, key=lambda x: x['total_present'])
-        else:
-            highest = {'group': 'N/A', 'total_present': 0}
-            lowest = {'group': 'N/A', 'total_present': 0}
+        # Track non-submitted groups for this session
+        non_submitted_groups_per_session[session.date.strftime("%Y-%m-%d")] = non_submitted_groups
 
-        # Store session data for graphs
+        # Highest and lowest attendance groups
+        highest = max(group_data, key=lambda x: x['total_present'], default={'group': 'N/A', 'total_present': 0})
+        lowest = min(group_data, key=lambda x: x['total_present'], default={'group': 'N/A', 'total_present': 0})
+
         session_labels.append(session.date.strftime("%Y-%m-%d"))
         attendance_values.append(session_total_present)
         submitted_groups_values.append(submitted_groups_count)
 
-        # Build a session-specific report dictionary
         session_reports.append({
             'session': session,
             'total_present': session_total_present,
@@ -406,6 +407,7 @@ def generate_attendance_report(request):
             'highest_attendance': highest,
             'lowest_attendance': lowest,
             'submitted_groups_count': submitted_groups_count,
+            'non_submitted_groups': non_submitted_groups,  # Include non-submitted groups in report
         })
 
     context = {
@@ -414,5 +416,6 @@ def generate_attendance_report(request):
         'session_labels': session_labels,
         'attendance_values': attendance_values,
         'submitted_groups_values': submitted_groups_values,
+        'non_submitted_groups_per_session': non_submitted_groups_per_session,  # Pass to template
     }
     return render(request, 'attendance/attendance_report.html', context)

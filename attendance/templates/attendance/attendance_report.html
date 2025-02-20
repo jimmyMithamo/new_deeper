@@ -14,7 +14,7 @@
 
     <div class="row d-flex justify-content-center">
       {% for session_info in session_attendance %}
-        <div class="col-12 col-md-4 col-lg-3">
+        <div class="col-12 col-md-6 col-lg-3">
           <div class="card border-2 m-2 shadow-sm" style="border-color: #FF9D23;">
             <div class="card-header text-center fw-bold" style="background-color: #FFD65A; color: #2c3e50;">
               Session {{ forloop.counter }} - {{ session_info.session.date }}
@@ -31,25 +31,32 @@
               <hr>
               <p class="text-success">{{ session_info.submitted_groups_count }} Groups submitted</p>
               <hr>
-              <p>
-                <strong>Group with Highest Attendance:</strong>
-                {% if session_info.highest_attendance.group != 'N/A' %}
-                  <span style="color: #FF9D23;">{{ session_info.highest_attendance.group }}</span>
+              <p class="text-danger">Groups Not Submitted:</p>
+              <div style="max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 8px; border-radius: 8px; background-color: #f9f9f9;">
+                {% if session_info.non_submitted_groups %}
+                  <ul class="mb-0 list-unstyled">
+                    {% for group_name in session_info.non_submitted_groups %}
+                      <li style="
+                          padding: 6px 10px;
+                          border-radius: 4px;
+                          {% if forloop.counter|divisibleby:2 %}
+                            background-color: #FFFAE5;  /* Light yellow */
+                          {% else %}
+                            background-color: #F0F0F0;  /* Light gray */
+                          {% endif %}
+                        ">
+                        {{ group_name }}
+                      </li>
+                    {% endfor %}
+                  </ul>
                 {% else %}
-                  <span class="text-muted">N/A</span>
+                  <p class="text-muted">All groups submitted attendance.</p>
                 {% endif %}
-                ({{ session_info.highest_attendance.total_present }} present)
-              </p>
-              <p>
-                <strong>Group with Lowest Attendance:</strong>
-                {% if session_info.lowest_attendance.group != 'N/A' %}
-                  <span style="color: #FF9D23;">{{ session_info.lowest_attendance.group }}</span>
-                {% else %}
-                  <span class="text-muted">N/A</span>
-                {% endif %}
-                ({{ session_info.lowest_attendance.total_present }} present)
-              </p>
+              </div>
             </div>
+            
+            
+           
           </div>
         </div>
       {% empty %}
@@ -71,12 +78,12 @@
     var attendanceChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: sessionLabels,  // X-axis: Session Dates
+            labels: sessionLabels,
             datasets: [
                 {
                     label: 'Total Attendance',
-                    data: attendanceValues,  // Y-axis: Attendance count
-                    borderColor: 'blue',  // Blue Line
+                    data: attendanceValues,
+                    borderColor: 'blue',
                     borderWidth: 2,
                     fill: false,
                     tension: 0.2
@@ -92,5 +99,4 @@
         }
     });
   </script>
-
 {% endblock %}
