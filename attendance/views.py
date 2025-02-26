@@ -271,6 +271,7 @@ def member_detail(request, member_id):
 
 @login_required
 def manage_status_requests(request):
+    #manage status
     if not request.user.is_staff:
         return redirect('supervisor_login')
 
