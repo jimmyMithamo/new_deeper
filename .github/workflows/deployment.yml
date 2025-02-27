@@ -19,6 +19,6 @@ jobs:
           username: deeper@mithames.co.ke
           password: ${{ secrets.SFTP_PASSWORD }}
           protocol: ftps
-          server-dir: /deeper
+          server-dir: /deeper/
           
       
