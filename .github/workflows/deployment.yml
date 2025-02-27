@@ -3,7 +3,7 @@ name: Deploy via FTPS
 on:
   push:
     branches:
-      - main
+      - main  # Adjust to match your deployment branch
 
 jobs:
   ftp-deploy:
@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@4.3.4
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
