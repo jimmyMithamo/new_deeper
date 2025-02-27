@@ -1,24 +1,24 @@
-name: Deploy to cpanel
-on: 
+name: Deploy to FTP
+
+on:
   push:
     branches:
-      - main
+      - main  # Change this to match your deployment branch
+
 jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deploy-Action
-    runs-on:  ubuntu-24.04
+  ftp-deploy:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
-          fetch-depth: 2
-      # Deploy to cPanel
-      - name: FTP-Deploy-Action
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.SFTP_HOST }}
-          username: ${{ secrets.SFTP_USERNAME }}
+          server: ftp.mithames.co.ke
+          username: deeper@mithames.co.ke
           password: ${{ secrets.SFTP_PASSWORD }}
-          protocol: ftps
-          port: 22
-          
-      
+          protocol: ftps  # Use FTPS instead of FTP
+          port: 21  # Explicit FTPS
+          timeout: 60000  # Increase timeout if needed
+          log-level: verbose  # Logs for debugging
