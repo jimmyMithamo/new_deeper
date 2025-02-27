@@ -1,22 +1,24 @@
-name: Deploy via FTPS
-
-on:
+name: Deploy to cpanel
+on: 
   push:
     branches:
-      - main  # Adjust to match your deployment branch
-
+      - main
 jobs:
-  ftp-deploy:
-    runs-on: ubuntu-latest
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on:  ubuntu-24.04
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Deploy to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      # Deploy to cPanel
+      - name: FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.SFTP_SERVER }}
           username: ${{ secrets.SFTP_USERNAME }}
           password: ${{ secrets.SFTP_PASSWORD }}
-          protocol: ftps  # Use 'ftps' for secure connection
-          server-dir: "/deeper/"
+          protocol: sftp
+          port: 22
+          
+      
