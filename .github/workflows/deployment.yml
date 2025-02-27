@@ -23,4 +23,11 @@ jobs:
           timeout: 60000  # Increase timeout if needed
           log-level: verbose  # Logs for debugging
           server-dir: /home/mithames/deeper/ # Remote directory to upload 
-          
+          passive: true  # Ensure Passive Mode is enabled
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/__pycache__/**
+            **/staticfiles/**
+          only-newer: true  # Upload only changed files
