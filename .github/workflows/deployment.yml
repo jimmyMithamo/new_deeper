@@ -19,6 +19,8 @@ jobs:
           username: deeper@mithames.co.ke
           password: ${{ secrets.SFTP_PASSWORD }}
           protocol: ftps
+          port: 21
+          timeout: 1200000
           server-dir: /deeper/
           
       
