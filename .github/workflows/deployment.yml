@@ -1,33 +1,24 @@
-name: Deploy to FTP
-
-on:
+name: Deploy to cpanel
+on: 
   push:
     branches:
-      - main  # Change this to match your deployment branch
-
+      - main
 jobs:
-  ftp-deploy:
-    runs-on: ubuntu-latest
+  FTP-Deploy-Action:
+    name: FTP-Deploy-Action
+    runs-on:  ubuntu-24.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy to FTP
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      # Deploy to cPanel
+      - name: FTP-Deploy-Action
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp.mithames.co.ke
           username: deeper@mithames.co.ke
           password: ${{ secrets.SFTP_PASSWORD }}
-          protocol: ftps  # Use FTPS instead of FTP
-          port: 21  # Explicit FTPS
-          timeout: 60000  # Increase timeout if needed
-          log-level: verbose  # Logs for debugging
-          server-dir: /deeper/ # Remote directory to upload 
-          passive: true  # Ensure Passive Mode is enabled
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/__pycache__/**
-            **/staticfiles/**
-          only-newer: true  # Upload only changed files
+          protocol: ftps
+          server-dir: /deeper
+          
+      
