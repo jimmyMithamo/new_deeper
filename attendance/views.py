@@ -301,7 +301,7 @@ def manage_status_requests(request):
 def attendance(request, session_id):
     leader = leaders.objects.get(username=request.session.get('leader'))
     group = leader.group
-    members = Member.objects.filter(group=group)
+    members = Member.objects.filter(group=group, status = 'Active')
     session = get_object_or_404(Session, id=session_id)
     attendance_records = {a.member.id: a.status for a in Attendance.objects.filter(session=session, member__group=group)}
     for member in members:
