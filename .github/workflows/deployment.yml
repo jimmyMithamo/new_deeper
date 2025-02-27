@@ -22,7 +22,7 @@ jobs:
           port: 21  # Explicit FTPS
           timeout: 60000  # Increase timeout if needed
           log-level: verbose  # Logs for debugging
-          server-dir: /home/mithames/deeper/ # Remote directory to upload 
+          server-dir: /deeper/ # Remote directory to upload 
           passive: true  # Ensure Passive Mode is enabled
           exclude: |
             **/.git*
